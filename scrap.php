@@ -1,5 +1,9 @@
 <?php
 
+// for scrap large dataset only
+
+/*
+
 require("db_config.php"); // import DB settings
 ini_set('max_execution_time', 0);
 
@@ -190,6 +194,6 @@ function returnXPathObject($item) {
 
 }
 
-
+*/
 
 ?>
