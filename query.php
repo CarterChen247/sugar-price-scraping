@@ -63,7 +63,7 @@ function scrap($db, $y, $m, $d, $time){
 				$result['time'] =  $time;
 
 			}
-			insertDB($db,$result['pid'] ,$result['pricePerKg'], $result['pricePerBag'],  $result['time'] );
+
 			print_r($result);
 
 		}else{
