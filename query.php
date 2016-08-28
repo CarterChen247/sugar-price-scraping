@@ -1,16 +1,24 @@
 <?php
-require("db_config.php");
-ini_set('safe_mode', false);
-date_default_timezone_set('Asia/Taipei');
+if (!empty($_GET['y'])&&!empty($_GET['m'])&&!empty($_GET['d'])){
 
-scrap($db, date("Y"), date("m"), date("d"),  date("Y-m-d"));
+	require("db_config.php");
+	ini_set('safe_mode', false);
+	date_default_timezone_set('Asia/Taipei');
+
+	scrap($db, $_GET['y'], $_GET['m'], $_GET['d'],  date($_GET['y']."-".$_GET['m']."-".$_GET['d']));
+
+}else{
+
+	echo 'please input query year, month and day';
+
+}
 
 function scrap($db, $y, $m, $d, $time){
 
 	$postFields = array(
-	'strYear' => $y,
-	'strMonth' => $m,
-	'strDay' => $d
+		'strYear' => $y,
+		'strMonth' => $m,
+		'strDay' => $d
 	);
 
 	try{
@@ -60,8 +68,8 @@ function scrap($db, $y, $m, $d, $time){
 
 		}else{
 
-      // echo 'no data input';
-    }
+			echo 'no data to be displayed today';
+		}
 
 	}catch(Exception $ex){
 
@@ -71,66 +79,67 @@ function scrap($db, $y, $m, $d, $time){
 
 function insertDB($db, $pid, $kg, $bag, $time){
 
-  $query = "INSERT INTO
-              price(pid,kg,bag,`time`)
-            SELECT
-              :pid, :kg, :bag, :time
-            FROM
-              DUAL
-            WHERE NOT EXIST
-            (SELECT
-              1
-            FROM
-              price
-            WHERE
-              `time` = :time
-            LIMIT
-              1)";
+	$query = "INSERT INTO
+	price(pid,kg,bag,`time`)
+	SELECT
+	:pid, :kg, :bag, :time
+	FROM
+	DUAL
+	WHERE NOT EXIST
+	(SELECT
+		1
+		FROM
+		price
+		WHERE
+		`time` = :time
+		LIMIT
+		1)";
 
-	try{
+		try{
 
-		$stmt = $db->prepare($query);
-		$stmt->bindParam(':pid', $pid, PDO::PARAM_STR);
-		$stmt->bindParam(':kg', $kg, PDO::PARAM_STR);
-		$stmt->bindParam(':bag', $bag, PDO::PARAM_STR);
-		$stmt->bindParam(':time', $time, PDO::PARAM_STR);
-		$result = $stmt->execute();
+			$stmt = $db->prepare($query);
+			$stmt->bindParam(':pid', $pid, PDO::PARAM_STR);
+			$stmt->bindParam(':kg', $kg, PDO::PARAM_STR);
+			$stmt->bindParam(':bag', $bag, PDO::PARAM_STR);
+			$stmt->bindParam(':time', $time, PDO::PARAM_STR);
+			$result = $stmt->execute();
 
-	}catch(PDOException $ex){
+		}catch(PDOException $ex){
 
-		die(json_encode($ex));
+			die(json_encode($ex));
+		}
+
 	}
 
-}
+	function clean($string) {
+		$string = str_replace('-', '', $string);
 
-function clean($string) {
-	 $string = str_replace('-', '', $string);
+		return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
+	}
 
-	 return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
-}
+	function curl($url, $postFields) {
 
-function curl($url, $postFields) {
+		$ch = curl_init();
 
-	$ch = curl_init();
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_POST, TRUE);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postFields));
 
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_POST, TRUE);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postFields));
+		$results = curl_exec($ch);
+		curl_close($ch);
+		return $results;
 
-	$results = curl_exec($ch);
-	curl_close($ch);
-	return $results;
+	}
 
-}
+	function returnXPathObject($item) {
 
-function returnXPathObject($item) {
+		$xmlPageDom = new DomDocument();
+		@$xmlPageDom->loadHTML($item);
+		$xmlPageXPath = new DOMXPath($xmlPageDom);
+		return $xmlPageXPath; // Returning XPath object
 
-	$xmlPageDom = new DomDocument();
-	@$xmlPageDom->loadHTML($item);
-	$xmlPageXPath = new DOMXPath($xmlPageDom);
-	return $xmlPageXPath; // Returning XPath object
+	}
 
-}
- ?>
+?>
