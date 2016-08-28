@@ -122,7 +122,7 @@ function insertDB($db, $pid, $kg, $bag, $time){
 		$ch = curl_init();
 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+		// curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE); // deprecated after php 5.3
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postFields));
