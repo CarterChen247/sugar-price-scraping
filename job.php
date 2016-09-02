@@ -72,20 +72,20 @@ function scrap($db, $y, $m, $d, $time){
 function insertDB($db, $pid, $kg, $bag, $time){
 
   $query = "INSERT INTO
-              price(pid,kg,bag,`time`)
-            SELECT
-              :pid, :kg, :bag, :time
-            FROM
-              DUAL
-            WHERE NOT EXIST
-            (SELECT
-              1
-            FROM
-              price
-            WHERE
-              `time` = :time
-            LIMIT
-              1)";
+							price(pid,kg,bag,`time`)
+						SELECT
+							*
+						FROM
+							(SELECT :pid, :kg, :bag, :time) AS tmp
+						WHERE NOT EXISTS
+							(SELECT
+									`time`
+							FROM
+									price
+							WHERE
+									`time`= :time)
+						LIMIT
+							1";
 
 	try{
 
