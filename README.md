@@ -21,6 +21,9 @@ http://sugarprice.hol.es/query.php?y=2016&m=8&d=26
 - [ ] Add the price of another type of sugar
 - [ ] Add the price of oil, gold or something else to see their relations
 
+##Dataset
+ [2089 rows in total (to 2016-09-02)](https://github.com/KazafChen/sugar-price-scraping/blob/master/price.sql)
+
 ##Reference
 * [糖價輸入-顯示查詢](http://g1.taisugar.com.tw/Sugar/Sugar_show.asp)
 * Jacob Ward. 2013. Instant PHP Web Scraping. Packt Publishing.
